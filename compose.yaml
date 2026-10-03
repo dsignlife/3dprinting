@@ -14,13 +14,10 @@ services:
       - .env
 
     environment:
-      # The SSH tunnel is running natively on Computer 1 (Windows).
-      # Docker reaches that Windows-hosted tunnel through Docker Desktop.
-      BLENDER_HOST: host.docker.internal
+      # Direct LAN connection from Docker -> Computer 2 Blender MCP.
+      BLENDER_HOST: "${BLENDER_HOST}"
       BLENDER_PORT: "${BLENDER_PORT:-9876}"
       BLENDER_MCP_SAFE_MODE: "${BLENDER_MCP_SAFE_MODE:-1}"
-
-      # Bambu MCP runs inside Docker.
       MCP_TRANSPORT: stdio
 
     volumes:

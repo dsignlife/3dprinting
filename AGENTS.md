@@ -1,129 +1,346 @@
-# AGENTS.md — Blender + Bambu P2S Codex Workspace
+# AGENTS.md — Codex + Blender MCP + Bambu P2S Workspace
 
-## Role
+## Purpose
 
-This repository is for creating and preparing 3D-printable objects using:
+This repository is a Codex-driven Blender and 3D-printing workspace.
 
-- Codex in VS Code on Computer 1
-- Blender MCP inside Docker on Computer 1
-- a manually started Windows SSH tunnel on Computer 1
-- Blender running on Computer 2 over the LAN
-- Bambu Lab P2S MCP inside Docker
+Primary use cases include:
 
-Use screenshots, reference files, measurements, and supplied implementation specs as the source of design intent.
+- recreating 3D objects from one or more images;
+- modifying existing `.blend`, `.glb`, `.gltf`, `.fbx`, `.obj`, or mesh assets;
+- rigging and animating objects;
+- creating mechanical/object animation;
+- creating organic/character animation;
+- creating procedural geometry;
+- preparing validated geometry for Bambu Lab P2S printing.
 
-Use repo-scoped skills under `.codex/skills/`.
+Use repo skills under `.codex/skills/` for Blender decision-making and execution.
 
-## Blender connection architecture
+---
 
-The SSH tunnel is NOT inside Docker.
+# Blender skill routing
 
-The user manually runs:
+Before substantial Blender work:
+
+1. inspect `.codex/skills/`;
+2. use `blender-task-router` first for broad, ambiguous, or multi-stage work;
+3. select only the relevant specialist skills;
+4. choose modeling, topology, animation, and validation strategies before detailed execution.
+
+Typical routing:
 
 ```text
-scripts/start-blender-tunnel.ps1
+request
+  ↓
+blender-task-router
+  ↓
+image/model/text input analysis
+  ↓
+modeling strategy
+  ↓
+topology strategy
+  ↓
+animation strategy
+  ↓
+Blender MCP execution
+  ↓
+reference/scene QA
+  ↓
+print preparation when needed
 ```
 
-on Computer 1 Windows.
+Do not automatically create an armature just because the user says “animate.”
 
-Connection path:
+Prefer the simplest robust mechanism:
+- object transforms;
+- parent hierarchy;
+- constraints;
+- drivers;
+- armatures/IK/FK;
+- shape keys;
+- physics;
+depending on the actual motion.
+
+---
+
+# Image-to-3D
+
+For image-based reconstruction, use relevant skills such as:
+
+- `blender-image-to-3d-director`
+- `blender-multiview-calibration`
+- `blender-reference-to-3d`
+- `blender-hard-surface`
+- `blender-sculpting-organic`
+- `blender-topology-retopology`
+- `blender-reference-qa`
+
+A single image does not reveal exact hidden geometry or depth.
+
+Do not pretend unseen geometry is known.
+
+Use measurable reference gates such as:
+- silhouette;
+- proportions;
+- landmark positions;
+- negative spaces;
+- joint centers;
+- repeated-feature spacing.
+
+---
+
+# Animation
+
+Use `blender-animation-strategy` for non-trivial animation.
+
+Examples:
 
 ```text
-Codex / VS Code
+spinning propeller
+→ object rotation
+→ correct shaft origin
+→ linear interpolation
+→ perfect loop
+```
+
+```text
+hinged door
+→ origin on hinge
+→ constrained/keyed rotation
+```
+
+```text
+robotic arm
+→ rigid hierarchy or armature
+→ joint axes and limits
+→ IK only if endpoint control helps
+```
+
+```text
+human/creature
+→ animation-ready topology
+→ armature
+→ weights
+→ IK/FK
+→ deformation testing
+```
+
+Do not use simulation when deterministic keyframes/constraints/drivers are simpler.
+
+---
+
+# Digital animation vs physical printed movement
+
+Digital Blender movement can use:
+- bones;
+- keyframes;
+- constraints;
+- drivers;
+- physics;
+- shape keys.
+
+Physical printed movement requires actual geometry:
+- hinges;
+- pins;
+- shafts;
+- sockets;
+- bearings;
+- flexures;
+- clearances;
+- multiple printable bodies.
+
+A Blender rig does not make a printed model physically movable.
+
+---
+
+# Blender MCP connection architecture
+
+Blender runs on Computer 2.
+
+Codex and Docker run on Computer 1.
+
+There is NO SSH tunnel.
+
+The connection is direct over the trusted home LAN:
+
+```text
+Computer 1
+
+VS Code / Codex
       ↓
 docker exec -i
       ↓
-mcp-for-blender inside 3d-mcp-tools
+3d-mcp-tools
       ↓
-host.docker.internal:9876
+mcp-for-blender
       ↓
-Computer 1 Windows SSH tunnel
+BLENDER_HOST:9876
+      │
+      │ trusted home LAN
+      ▼
+
+Computer 2
+
+Windows Firewall
+(restricted to Computer 1 IP)
       ↓
-Computer 2 SSH server
-      ↓
-Computer 2 localhost:9876
-      ↓
-Blender MCP addon
+Blender MCP server
       ↓
 Blender
 ```
 
-If Blender MCP is unavailable:
+`BLENDER_HOST` is Computer 2's LAN IPv4 address and comes from `.env`.
 
-1. do not rewrite MCP configuration immediately;
-2. check `scripts/check-blender-tunnel.ps1`;
-3. confirm the Windows tunnel is running;
-4. confirm Docker can reach `host.docker.internal:$BLENDER_PORT`;
-5. confirm Blender MCP is running on Computer 2 localhost.
+Example:
 
-Docker must use:
-
-```text
-BLENDER_HOST=host.docker.internal
+```env
+BLENDER_HOST=192.168.1.50
+BLENDER_PORT=9876
 ```
 
-Do NOT change Docker Blender host to `127.0.0.1`; inside Docker that would refer to the container itself.
+Do not use `host.docker.internal` for Blender in this direct-LAN configuration.
 
-## SSH files
+Do not use `127.0.0.1` inside Docker for Blender.
 
-Local-only files beside the PowerShell scripts:
+---
 
-- `scripts/blender_mcp` — Computer 1 private key
-- `scripts/blender_mcp.pub` — matching public key copied to Computer 2 `authorized_keys`
-- `scripts/blender_known_hosts` — verified Computer 2 SSH host key
+# Direct LAN security
 
-These files are gitignored.
+Blender MCP should only be reachable on the trusted LAN.
 
-Never print, commit, rewrite, upload, or expose the private key.
+Computer 2's firewall rule should:
+- allow TCP 9876;
+- use the Private network profile;
+- restrict `RemoteAddress` to Computer 1's LAN IP.
 
-## Blender execution
+Do not create an unrestricted Internet/public-network firewall rule for port 9876.
 
-- Use the `blender` MCP server for Blender inspection and edits.
-- Inspect the current Blender scene before destructive changes.
-- Prefer numeric dimensions and transforms for fit-critical geometry.
-- Preserve dimensions identified as CRITICAL.
-- Prefer non-destructive modifier workflows while iterating.
-- Never use visual eyeballing as the only validation for functional dimensions.
-- Blender runs outside Docker; do not install or launch Blender in Docker.
+Do not forward port 9876 on the router.
 
-## Mesh validation
+Do not expose Blender MCP to the public Internet.
 
-Before declaring a model print-ready:
-- verify dimensions;
-- check normals;
-- check manifold/watertight state where applicable;
-- check disconnected bodies;
-- validate exported STL/3MF when possible.
+Keep `BLENDER_MCP_SAFE_MODE=1`.
 
-The MCP toolbox contains:
+---
+
+# Connection troubleshooting
+
+If Blender MCP is unreachable:
+
+1. verify Blender is running on Computer 2;
+2. verify Blender MCP server is started;
+3. verify something is listening on TCP 9876;
+4. verify the listener is LAN-reachable, not only `127.0.0.1`;
+5. verify Computer 2 firewall permits Computer 1's LAN IP;
+6. from Computer 1 run:
+   `scripts/check-blender-lan.ps1`;
+7. only after native LAN connectivity works, investigate Docker or Codex MCP configuration.
+
+Do not add SSH/tunneling as an automatic fix.
+
+---
+
+# Blender execution rules
+
+Use the `blender` MCP server for Blender operations.
+
+Before modifying the scene:
+- inspect the scene;
+- inspect relevant objects;
+- inspect dimensions/transforms;
+- inspect existing rigs/Actions where applicable;
+- understand hierarchy and current selection.
+
+Do not invent MCP tool names or schemas.
+Discover and use the available MCP tools.
+
+Prefer reversible/non-destructive editing during iteration.
+
+Suggested names:
+- `PART_*`
+- `CUT_*`
+- `DATUM_*`
+- `REF_*`
+
+Save editable `.blend` source before destructive final export.
+
+---
+
+# Precision and QA
+
+Use numeric values for fit-critical geometry.
+
+Preserve user-defined critical dimensions.
+
+Validate as relevant:
+- dimensions;
+- normals;
+- disconnected geometry;
+- manifold/watertight state;
+- zero-thickness geometry;
+- unintended internal faces;
+- pivots;
+- constraints;
+- frame range;
+- F-curves;
+- loop boundary;
+- reference match;
+- exported artifact.
+
+Do not claim work is accurate, animation-ready, or print-ready unless relevant validation was performed.
+
+---
+
+# Printing
+
+For printable output use:
+- `blender-printability-director`
+- `blender-print-prep`
+
+Validate:
+- scale;
+- critical dimensions;
+- wall thickness;
+- clearances;
+- body count;
+- manifold/watertight state;
+- orientation;
+- exported STL/3MF.
+
+The Docker toolbox contains:
 - `mesh-python`
 - `trimesh`
 - `manifold3d`
 - `numpy`
 - `Pillow`
 
-The repo is mounted in the toolbox at `/workspace`.
+The repo is mounted at `/workspace`.
 
-## Bambu Lab P2S
+---
 
-- Use the `bambu` MCP for printer state, AMS/material information, file workflow, and print operations.
-- Printer secrets are injected privately through Docker `.env`.
-- Never echo, expose, or commit the LAN access code/token.
-- Never start, cancel, pause, resume, heat, move hardware, or load/unload filament unless the user explicitly requests that physical action.
-- Modeling/exporting/slicing/preparing/uploading does NOT authorize starting a physical print.
-- Connection/setup tests must be read-only.
+# Bambu Lab P2S
 
-## Screenshots
+Use the `bambu` MCP for printer state and supported printer operations.
 
-The user may paste screenshots directly into Codex in VS Code.
-Use them as visual references and use Blender MCP inspection/numeric checks for implementation.
+Never echo or commit `.env` secrets.
 
-## Files
+Physical state changes require explicit user intent.
+
+Do not start/cancel/pause/resume/heat/move/load/unload unless explicitly requested.
+
+“Make printable”, “prepare”, “slice”, or “upload” does not authorize starting a print.
+
+---
+
+# Files
 
 Prefer:
-- `references/`
-- `specs/`
-- `models/`
-- `output/`
 
-Never commit `.env`.
+```text
+references/
+specs/
+models/
+output/
+```
+
+Do not commit `.env`.
