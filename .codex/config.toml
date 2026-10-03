@@ -1,0 +1,17 @@
+# Repo-scoped Codex MCP configuration.
+# Requires this repository/workspace to be trusted.
+# MCP stdio requires `docker exec -i`, not `-it`.
+
+[mcp_servers.blender]
+command = "docker"
+args = ["exec", "-i", "3d-mcp-tools", "mcp-for-blender"]
+enabled = true
+startup_timeout_sec = 30
+default_tools_approval_mode = "auto"
+
+[mcp_servers.bambu]
+command = "docker"
+args = ["exec", "-i", "3d-mcp-tools", "bambu-printer-mcp"]
+enabled = true
+startup_timeout_sec = 30
+default_tools_approval_mode = "writes"

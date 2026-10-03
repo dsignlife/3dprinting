@@ -1,0 +1,16 @@
+.env
+.env.*
+!.env.example
+
+# Local SSH authentication/trust material for the Windows Blender tunnel.
+# Never commit keys or machine-specific host trust files.
+/scripts/blender_mcp
+/scripts/blender_mcp.pub
+/scripts/blender_known_hosts
+
+output/*
+!output/.gitkeep
+tmp/
+*.log
+.DS_Store
+Thumbs.db

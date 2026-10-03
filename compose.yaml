@@ -1,0 +1,30 @@
+services:
+  mcp-tools:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BLENDER_MCP_PACKAGE: mcp-for-blender
+        BAMBU_MCP_PACKAGE: bambu-printer-mcp@latest
+
+    image: codex-3d-mcp-tools:latest
+    container_name: 3d-mcp-tools
+
+    env_file:
+      - .env
+
+    environment:
+      # The SSH tunnel is running natively on Computer 1 (Windows).
+      # Docker reaches that Windows-hosted tunnel through Docker Desktop.
+      BLENDER_HOST: host.docker.internal
+      BLENDER_PORT: "${BLENDER_PORT:-9876}"
+      BLENDER_MCP_SAFE_MODE: "${BLENDER_MCP_SAFE_MODE:-1}"
+
+      # Bambu MCP runs inside Docker.
+      MCP_TRANSPORT: stdio
+
+    volumes:
+      - ./:/workspace
+
+    init: true
+    restart: unless-stopped
