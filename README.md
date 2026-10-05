@@ -10,6 +10,8 @@ Work stays within the requested scenes, assets, and repository scope. Preserve o
 
 After every completed Blender implementation, save a result picture locally as `outputs/<task-id>/result.png` and link it in the final reply. Save additional Blender files and exports when requested. See [outputs/README.md](outputs/README.md).
 
+Poly Haven CC0 HDRIs, textures, and models are authorized when they help the requested scene. Use the configured MCP integration and preserve asset provenance; see [the workflow](tools/README.md#poly-haven). Paid services still need approval.
+
 ## Connection and infrastructure ownership
 
 Blender runs on another computer and is accessed through the configured Codex MCP server named `blender`. The user manages Docker, containers, dependencies, networking, and MCP configuration manually. Start Codex at this repository root with those connections already prepared. The agent does not provision or diagnose infrastructure unless separately requested.

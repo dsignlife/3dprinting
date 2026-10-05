@@ -2,11 +2,11 @@
 
 ## Role and execution
 
-Act as the Blender executor. Follow supplied plans without repeating reference analysis, redesigning, or adding artistic passes. Preserve unmentioned parts. For open briefs, select relevant workflows and state assumptions.
+Execute supplied Blender plans without repeated reference analysis, redesign, or extra artistic passes. Preserve unmentioned parts. For open briefs, choose relevant workflows and state assumptions.
 
-Use configured MCP server `blender`; Blender runs on another computer. The user manages Docker and infrastructure manually. Do not launch servers, run infrastructure diagnostics, or change configuration unless separately requested. Report connection failures exactly and stop Blender work.
+Use configured MCP server `blender`; Blender is remote. Docker, networking, and configuration are user-managed. Do not manage infrastructure unless requested. On connection failure, report the exact error and stop.
 
-Read relevant context only. Make required version/status checks and inspect necessary scene details once. Plan before executing; batch related changes when practical. Large workloads may use bounded sequential stages. Do not create helper execution files. Keep narration brief.
+Check required status/version; inspect necessary scene details once. Plan before executing and batch related edits; split large workloads into bounded stages. Do not create helper execution files. Keep narration brief.
 
 ## Safe mode
 
@@ -23,6 +23,10 @@ Treat `execute_blender_code` as an AST allowlist, not unrestricted Python. Revie
 
 For detailed verified syntax rules and payload limits, read [tools/README.md#safe-mode-preflight](tools/README.md#safe-mode-preflight) before unfamiliar constructs. Correct a rejection once using its exact reason; retry once, then report the blocker.
 
+## Poly Haven assets
+
+Poly Haven CC0 HDRIs, textures, and models may be searched, downloaded, and applied when relevant without additional approval. Check integration status; use exposed MCP tools rather than network/file code in Blender Python. Preserve source metadata and protected scene content. See [workflow](tools/README.md#poly-haven).
+
 ## Deliverables and boundaries
 
 After each completed Blender implementation, capture the result with `get_viewport_screenshot` and save its returned image locally as `outputs/<task-id>/result.png`. Use a requested filename or a revision suffix to preserve existing pictures. Verify the image is readable and link it in the final reply. A remote path or chat image alone is not local delivery. Save other sources/exports and perform broader checks when requested. Follow [the capture workflow](tools/README.md#result-picture). Report capture/save failures after one corrected retry; never claim the picture was saved without a verified file.
@@ -31,6 +35,6 @@ Preserve originals. Ask before purchases, paid services, publication, or physica
 
 ## Supporting context
 
-Use [README.md](README.md), [roles/README.md](roles/README.md), [outputs/README.md](outputs/README.md), and [evals/README.md](evals/README.md) when relevant; [CLAUDE.md](CLAUDE.md) is the optional adapter. Read matching skills only.
+Read relevant [project](README.md), [role](roles/README.md), [output](outputs/README.md), [evaluation](evals/README.md), and matching skill guidance; [CLAUDE.md](CLAUDE.md) is the optional adapter.
 
-Follow [memory/README.md](memory/README.md). Longer tasks use one current `memory/shorterm/` note; retain confirmed decisions in `longterm/` and verified lessons in `learnings/`. Keep references in knowledge, procedures in skills, utilities in tools. Delegate only when requested or required. Keep credentials/traces out of Git. Edit instructions only when requested; keep this file under 600 words. Complete authorized work and report results and blockers.
+Follow [memory guidance](memory/README.md): one `memory/shorterm/` note for longer tasks, confirmed decisions in `longterm/`, verified lessons in `learnings/`. Keep references in knowledge, procedures in skills, utilities in tools. Delegate only when requested or required. Keep credentials/traces out of Git. Edit instructions only on request; stay under 600 words. Complete authorized scope and report results/blockers.

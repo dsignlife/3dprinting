@@ -28,6 +28,22 @@ Optional services need task relevance and availability checks; purchases and pai
 
 Configuration files remain user-managed. Keep private configuration values and credentials out of reports. No infrastructure changes are part of ordinary Blender execution.
 
+## Poly Haven
+
+The user authorizes searching, downloading, importing, and applying Poly Haven HDRIs, textures, and models when relevant to the current task, without additional approval. Follow the brief and preserve protected scene content.
+
+Poly Haven's [asset license](https://polyhaven.com/license) permits commercial use without attribution under CC0. Its [live API terms](https://github.com/Poly-Haven/Public-API/blob/master/ToS.md) separately require software to identify the source. Preserve supplied source/licence metadata and report asset page links. Do not assume unlimited API access, a fixed catalog size, or identical custom properties across server versions.
+
+Use current exposed tools and schemas. This session exposes:
+
+1. `get_polyhaven_status`: check whether the integration is enabled. If unavailable, report the blocker; the user handles setup.
+2. `search_polyhaven_assets`: search by supported type, query, category, or attributes. Use `get_polyhaven_categories` when needed.
+3. `get_polyhaven_asset_preview`: inspect a candidate when useful before downloading.
+4. `download_polyhaven_asset`: download/import the selected ID and asset type. Prefer 1k–2k for background assets; increase resolution when the view needs it. Model imports use the integration's Blender import path.
+5. `set_texture`: apply a downloaded texture to the intended object. This replaces all material slots; preserve existing assignments before an authorized replacement. Check imported models' placement and scale, and preserve existing worlds unless replacement is part of the brief.
+
+Discover schemas rather than assuming generic `search_assets`/`import_asset` names or unsupported arguments such as `apply_to`. Dedicated asset tools handle downloads/imports. Do not imitate them with `requests`, raw file I/O, or manual blend append/link calls inside `execute_blender_code`; safe mode remains in force. No custom helper files or Docker changes are needed. Save the normal final result picture after implementation.
+
 ## Result picture
 
 Every completed Blender implementation includes a local picture of its final result:
