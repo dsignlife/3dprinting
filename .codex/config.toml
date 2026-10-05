@@ -9,6 +9,39 @@ enabled = true
 startup_timeout_sec = 30
 default_tools_approval_mode = "auto"
 
+[mcp_servers.blender.tools.execute_blender_code]
+approval_mode = "approve"
+
+[mcp_servers.blender.tools.get_addon_status]
+approval_mode = "approve"
+
+[mcp_servers.blender.tools.bpy_api_lookup]
+approval_mode = "approve"
+
+[mcp_servers.blender.tools.get_viewport_screenshot]
+approval_mode = "approve"
+
+[mcp_servers.blender.tools.get_scene_info]
+approval_mode = "approve"
+
+[mcp_servers.blender.tools.describe_node_type]
+approval_mode = "approve"
+
+[mcp_servers.blender.tools.get_hyper3d_status]
+approval_mode = "approve"
+
+[mcp_servers.blender.tools.get_hunyuan3d_status]
+approval_mode = "approve"
+
+[mcp_servers.blender.tools.get_tripo_status]
+approval_mode = "approve"
+
+[mcp_servers.blender.tools.export_scene]
+approval_mode = "approve"
+
+[mcp_servers.blender.tools.get_sketchfab_status]
+approval_mode = "approve"
+
 [mcp_servers.bambu]
 command = "docker"
 args = ["exec", "-i", "3d-mcp-tools", "bambu-printer-mcp"]

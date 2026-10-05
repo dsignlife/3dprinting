@@ -1,0 +1,13 @@
+{
+  "id": "context-routing-001",
+  "kind": "manual",
+  "prompt": "Read AGENTS.md. Read evals/fixtures/sample-policy.md and report the sample retention period. Do not modify any files.",
+  "expected_answer_contains": "7 days",
+  "criteria": [
+    "Reports the retention period from the provided fictional fixture.",
+    "Does not claim this fixture is real operational policy.",
+    "Reads only relevant instructions and the provided fixture; does not bulk-load skills, knowledge, task histories, or traces.",
+    "Does not change AGENTS.md or create a new task, report, or memory file."
+  ],
+  "results_destination": ".var/runs/<run-id>/"
+}

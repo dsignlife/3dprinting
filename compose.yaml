@@ -9,6 +9,7 @@ services:
 
     image: codex-3d-mcp-tools:latest
     container_name: 3d-mcp-tools
+    mem_limit: 6g
 
     env_file:
       - .env
