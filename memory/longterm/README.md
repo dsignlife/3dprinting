@@ -1,28 +1,26 @@
-# Long-term memory
+# Long-term Blender decisions
 
-Use this folder for Director context that remains useful across tasks: confirmed preferences, project decisions, scope boundaries, and established coordination conventions. Follow the shared [memory guidance](../README.md).
+Retain confirmed preferences and decisions useful across tasks. Follow [the memory guide](../README.md). Examples include approved visual styles, export conventions, known reference dimensions, protected fit interfaces, and material preferences.
 
-Read matching notes when a task depends on an earlier decision. Write or update a note when a durable decision is confirmed. Do not turn a temporary assumption into an established fact.
-
-Examples include an agreed artifact destination, a confirmed specialist workspace, or a user-approved decision about which work the Director owns. Record available integrations only after verification, with a review trigger; a capability observed in one session is not a permanent guarantee. Keep active assignments and blockers in short-term memory.
-
-Use a descriptive filename such as `runner-selection.md` and include:
+Read matching notes only when relevant. Use one descriptive file per topic:
 
 ```markdown
 # Topic
 
-- Scope: where this decision applies
+- Scope:
 - Status: current / superseded
 - Last reviewed: YYYY-MM-DD
 
-## Decision or confirmed context
-What was agreed or established.
+## Decision
+Confirmed preference, dimension, or convention.
 
-## Rationale and evidence
-Why it applies, with links to confirmation or supporting sources.
+## Evidence and rationale
+User confirmation or measured evidence linked to its source.
 
 ## Review trigger
-Changes that would require checking this note again.
+Changes requiring revalidation.
 ```
 
-Update the existing note when a decision changes. Replace stale guidance or clearly mark it superseded and link to its replacement. Store domain facts and policies in [knowledge/](../../knowledge/INDEX.md), then link to them here when they inform a project decision. Memory does not authorize changes to agent instructions.
+Do not turn inferred dimensions, hidden geometry, or temporary assumptions into established facts. Record integration availability only with dated verification and a review trigger. Keep active scene progress and blockers in [shorterm/](../shorterm/README.md).
+
+Update notes when decisions change and link superseded entries to replacements. Domain references belong in `knowledge/` when created. The initialization brief already lives in [README.md](../../README.md) and [AGENTS.md](../../AGENTS.md). Memory does not authorize instruction changes or physical printer actions.

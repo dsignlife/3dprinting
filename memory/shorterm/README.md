@@ -1,40 +1,36 @@
-# Short-term memory
+# Short-term Blender task memory
 
-Use this folder for the Director's active plans and task context that another session or agent needs to continue the work. Follow the shared [memory guidance](../README.md).
+Use this folder for longer scene tasks or handoffs. Follow [the memory guide](../README.md) and preserve `shorterm`. Keep one current `<task-id>.md` record per task; simple tasks need none.
 
-Create a task note for work spanning sessions or requiring a handoff. Read it before resuming that task. Update it after a meaningful decision, change in status, or handoff; keep the current state instead of a running conversation log.
-
-Use a filename such as `<task-id>.md` and include:
+A useful record contains:
 
 ```markdown
 # Task title
 
-- Goal:
-- Constraints:
-- Acceptance criteria:
-- Owner:
+- Goal and intended use:
 - Status: active / blocked / complete
 - Last updated: YYYY-MM-DD
+- Source assets and references:
+- Working .blend and output destination:
+- Units, dimensions, and protected interfaces:
+- Constraints and user approvals:
+- Assumptions and inferred geometry:
+- Acceptance criteria:
 
-## Plan and dependencies
-Sequenced tasks, recommended approach, and readiness conditions.
+## Current state
+Workflow, verified progress, and latest preview or export evidence.
 
-## Assignments
-For each task: specialist, workspace, owned files or artifacts,
-dependencies, brief link, actual dispatch reference when available,
-and state: awaiting dispatch / dispatched / returned / correction needed / accepted.
+## Remaining work
+Next steps, dependencies, and blockers.
 
-## Returned results and decisions
-Reported findings, Director verification, acceptance or correction decision,
-and remaining uncertainties. Link to evidence instead of copying logs.
+## Verification
+Checks run, results, and checks still unavailable.
 
-## Artifacts
-Links to relevant files, outputs, and supporting sources.
-
-## Next action
-The concrete next step, responsible agent, and any unresolved blocker.
+## Handoff
+Next action and responsible agent; ownership and actual dispatch
+reference only if delegation occurred.
 ```
 
-Use assignment briefs from [roles/README.md](../../roles/README.md). Update the live record after dispatch, a returned result, a review decision, or a meaningful blocker. Keep reported completion separate from accepted work; do not mark the overall goal complete while required tasks or checks remain unresolved.
+Read before resuming and update after meaningful decisions, changes, or blockers. A planned step is not a completed scene edit. Link to [outputs/](../../outputs/README.md); do not copy meshes or raw logs into notes.
 
-When work finishes, move useful project decisions to [longterm/](../longterm/README.md) and verified reusable lessons to [learnings/](../learnings/README.md). Remove resolved scratch details. Retain only the completion context needed for a handoff; remove obsolete task notes when no longer useful.
+At completion, preserve confirmed decisions in [longterm/](../longterm/README.md) and reusable lessons in [learnings/](../learnings/README.md). Remove resolved scratch details; keep only useful completion or handoff context. Do not fabricate scene work or assignments during initialization.

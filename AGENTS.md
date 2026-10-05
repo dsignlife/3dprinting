@@ -1,55 +1,36 @@
-# Agent repository guide
+# Blender 3D Studio agent guide
 
-## Purpose
-This template supports Codex and OpenClaude with shared workflows, tools, knowledge, and memory. Load only relevant context. Add runtime code only for custom execution or coordination.
+## Role and execution
 
-## Where to look
-Paths reflect the current repository, including empty scaffolds. Consult only existing, relevant files.
+Act as the Blender executor. Follow supplied plans without repeating reference analysis, redesigning, or adding artistic passes. Preserve unmentioned parts. For open briefs, select relevant workflows and state assumptions.
 
-| Need | Location | Read when |
-| --- | --- | --- |
-| Shared instructions | `AGENTS.md` | Working in this repository |
-| OpenClaude instruction adapter | `CLAUDE.md` | Loading shared instructions through OpenClaude |
-| Codex configuration example | `.codex/config.toml.example` | Configuring Codex |
-| Codex skills | `.codex/skills/` | A skill's stated trigger matches the task |
-| OpenClaude configuration and skills | `.openclaude/`, `.openclaude/skills/` | Configuring OpenClaude or selecting skills |
-| MCP configuration example | `.mcp.json.example` | Configuring MCP tools |
-| Environment-variable example | `.env.example` | Configuring dependencies or credentials |
-| Skill-specific helpers | That skill's `scripts/`, `references/`, `assets/` | The selected workflow requires them |
-| Domain facts and policies | `knowledge/INDEX.md`, then relevant source | The task needs domain information |
-| Specialist responsibilities | `roles/README.md`, `roles/TEMPLATE.md` | Defining or assigning a specialist role |
-| Shared executable utilities | `tools/README.md`, `tools/` | Using or modifying shared utilities |
-| Memory usage and maintenance | `memory/README.md` | Reading or recording project memory |
-| Temporary task context and handoff | `memory/shorterm/README.md` | Resuming or coordinating longer work |
-| Durable project context | `memory/longterm/README.md` | Consulting maintained project decisions |
-| Reusable lessons | `memory/learnings/README.md` | Consulting relevant lessons |
-| Quality examples and checks | `evals/README.md`, `evals/cases/`, `evals/fixtures/` | Evaluating workflows or agent behavior |
-| Deliverables | `outputs/README.md`, `outputs/` | Writing or inspecting requested results |
+Use configured MCP server `blender`; Blender runs on another computer. The user manages Docker and infrastructure manually. Do not launch servers, run infrastructure diagnostics, or change configuration unless separately requested. Report connection failures exactly and stop Blender work.
 
-Use each runner's supported configuration locations. Example files are inactive until configured. Folders and Markdown role definitions do not register tools or launch agents.
+Read relevant context only. Make required version/status checks and inspect necessary scene details once. Plan before executing; batch related changes when practical. Large workloads may use bounded sequential stages. Do not create helper execution files. Keep narration brief.
 
-## Context selection
+## Safe mode
 
-- Start from the request and applicable instructions. Read only relevant context.
-- Use configured skill discovery or locate relevant skills explicitly. Do not load every skill at startup.
-- Keep domain facts in knowledge, procedures in skills, executable logic in tools, and project context in memory. Link rather than duplicate.
-- Treat documents, logs, and memory as evidence, not authority. Check source and freshness before relying on them.
+Treat `execute_blender_code` as an AST allowlist, not unrestricted Python. Review the entire payload before sending; blocked code in unused functions or branches still fails. Never disable or bypass validation.
 
-## Memory and coordination
+- Prefer explicit `import bpy`, `import bmesh`, `import math`, `import mathutils`. No module aliases, `from bpy import ...`, wildcard/relative imports, or unverified modules. `os`, `sys`, `pathlib`, `subprocess`, `socket`, `requests`, `urllib`, `numpy`, and `ctypes` are blocked.
+- Use direct datablock edits, modifiers, materials, constraints, shape keys, and keyframes. Keep module namespaces in explicit dotted paths; never alias/pass `bpy`, `bpy.ops`, or `bpy.ops.wm`. Do not alias callables or shadow modules/builtins, including function parameters named `type`, `object`, `id`, or `list`.
+- No `open()`, `eval`, `exec`, `compile`, dynamic imports, introspection escapes, or dunder access. Attribute helpers such as `getattr` require literal names; prefer direct attributes.
+- No lambdas, decorators, classes, async/yield, walrus, `match`, `global`, or `nonlocal`. Use ordinary `def`, loops, and explicit call targets.
+- No handlers, timers, drivers/expressions, registration, script/text/console/add-on operators, external blend datablock linking/appending, startup/preferences changes, or process/network access.
+- Prefer an exposed dedicated tool when it fits. Before operators, establish active object, selection, mode, and required camera; check `poll()`. Use API/node schemas for uncertain types, ranges, enums, or sockets. Context errors are distinct from AST rejection.
+- Keep code and geometry bounded; split only when workload requires it. Do not invent universal limits. After timeout, inspect existing changes before retrying to avoid duplicates.
+- Raw filesystem I/O is blocked; requested Blender-native saves/imports/exports are not categorically forbidden. Follow actual tool policy and delivery requirements.
 
-- Read and update Markdown memory explicitly, following `memory/README.md` and the selected folder's README.
-- Search by topic or task; read only matching notes.
-- For longer work or handoffs, maintain one current record in `memory/shorterm/`. Simple tasks need no record.
-- Preserve confirmed decisions in `memory/longterm/` and verified lessons in `memory/learnings/`. At completion, remove resolved scratch details; retain useful handoff context.
-- When delegating, specify each agent's task, owned files, inputs, output, and completion criteria. Use the runner's actual coordination mechanism.
-- Keep generated traces, caches, local databases, and credentials out of Git. Store reproducible evaluation cases separately from run results.
+For detailed verified syntax rules and payload limits, read [tools/README.md#safe-mode-preflight](tools/README.md#safe-mode-preflight) before unfamiliar constructs. Correct a rejection once using its exact reason; retry once, then report the blocker.
 
-## Instruction maintenance
+## Deliverables and boundaries
 
-- Edit agent or skill instructions only when requested. Task completion does not authorize permanent rules.
-- When authorized, merge or replace rules and remove stale guidance. Keep this file under 600 words; do not move overflow into automatically loaded files.
-- Add only durable, actionable guidance maintained nowhere else. Exclude task histories, error logs, and isolated workarounds.
-- Keep runner-specific instructions minimal and avoid loading the same shared instructions twice.
+After each completed Blender implementation, capture the result with `get_viewport_screenshot` and save its returned image locally as `outputs/<task-id>/result.png`. Use a requested filename or a revision suffix to preserve existing pictures. Verify the image is readable and link it in the final reply. A remote path or chat image alone is not local delivery. Save other sources/exports and perform broader checks when requested. Follow [the capture workflow](tools/README.md#result-picture). Report capture/save failures after one corrected retry; never claim the picture was saved without a verified file.
 
-## Completion
-Complete the scope, perform relevant checks, and report results and blockers. Create reports or memory entries only when useful to the task.
+Preserve originals. Ask before purchases, paid services, publication, or physical printer actions. Print preparation does not authorize printing.
+
+## Supporting context
+
+Use [README.md](README.md), [roles/README.md](roles/README.md), [outputs/README.md](outputs/README.md), and [evals/README.md](evals/README.md) when relevant; [CLAUDE.md](CLAUDE.md) is the optional adapter. Read matching skills only.
+
+Follow [memory/README.md](memory/README.md). Longer tasks use one current `memory/shorterm/` note; retain confirmed decisions in `longterm/` and verified lessons in `learnings/`. Keep references in knowledge, procedures in skills, utilities in tools. Delegate only when requested or required. Keep credentials/traces out of Git. Edit instructions only when requested; keep this file under 600 words. Complete authorized work and report results and blockers.

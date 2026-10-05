@@ -1,24 +1,27 @@
-# Director evaluations
+# Blender workflow evaluations
 
-Keep versioned cases in `cases/` and deterministic sample inputs in `fixtures/`. Store generated run results, latency, cost, and traces in `.var/runs/<run-id>/`.
+Keep reproducible cases in `cases/` and sample inputs in `fixtures/`. No automated evaluator is installed. Run manual cases through the chosen agent when requested or useful, and compare visible actions and results with their criteria.
 
-The `.var/` location is reserved for generated results and is not currently scaffolded. Create a run destination only when executing an evaluation. No automated evaluator is installed.
+## Existing manual case
 
-`cases/context-routing.json` is a manual starter evaluation for the context-routing behavior. It uses a fictional fixture, not actual business policy. Run it through the chosen agent, inspect its visible tool trace and response, and compare against the criteria. There is no automated evaluator installed.
+[cases/context-routing.json](cases/context-routing.json) asks the agent to read [fixtures/sample-policy.md](fixtures/sample-policy.md) and report its sample retention period. Expected result: `7 days`, explicitly identified as fictional evaluation data. The agent should read relevant context only and avoid instruction edits or unnecessary files.
 
-Add cases when a workflow needs a repeatable quality check. Do not turn every transient error into a permanent evaluation.
+This checks context selection, not Blender connectivity, scene quality, or printability. Initialization preserves the case and fixture and does not claim an evaluation pass.
 
-## Director checks
+The case specifies generated results at `.var/runs/<run-id>/`. This destination is not scaffolded or ignored by the current `.gitignore`; keep generated results out of commits and configure exclusion when a run workflow is requested. Record pass, fail, or unverified per criterion with evidence.
 
-Before accepting a plan or result, check that it:
+## Blender task acceptance
 
-- Preserves the user's goal, constraints, and acceptance criteria.
-- Gives each specialist a bounded objective, relevant inputs, dependencies, ownership, concrete guidance, and expected return evidence.
-- Avoids concurrent writers owning the same files or artifacts.
-- Distinguishes prepared briefs, actual dispatch, returned results, and accepted work.
-- Bases acceptance on inspected artifacts and suitable verification, recording unavailable checks explicitly.
-- Gives the next action and updates current task state without repeating completed work.
+Every completed implementation must include a readable local result picture and its link in the final reply, following [the capture workflow](../tools/README.md#result-picture). Verify the file exists, is nonempty, and decodes as an image. Broader QA and mesh audits follow the brief. Successful execution proves the edit ran, not that unperformed checks passed. When broader verification is requested, select the relevant evidence:
 
-Use small hypothetical scenarios to review these behaviors manually: a missing Blender connection should leave a brief awaiting dispatch; a failed coding check should trigger a correction request; an unsupported completion claim should remain awaiting evidence. These are evaluation scenarios, not recorded production results.
+| Area | Evidence needed |
+| --- | --- |
+| Scene and presentation | Scene inspection and viewport or render preview; organization, materials, lighting, and framing |
+| Dimensions and export | Measured units and bounds, requested settings, exported-file inspection or re-import when needed |
+| Reference reconstruction | Matched views, silhouettes or landmarks, known dimensions, and explicit hidden-geometry assumptions |
+| Animation | Motion and timing, pivots, deformation, intersections, and seamless endpoints for loops |
+| Print preparation | Independent mesh checks for manifoldness, normals, bodies, and dimensions, plus walls, clearances, and orientation review |
 
-For a manual evaluation, read the case and its relevant fixture, give its prompt to the chosen agent, and compare the visible response and tool trace with the criteria. Report pass, fail, or unverified for each criterion. Capture generated results only when running the evaluation. This documentation initialization does not execute another agent or establish passing production behavior.
+Use [blender-qa-review](../.codex/skills/blender-qa-review/SKILL.md), [blender-reference-qa](../.codex/skills/blender-reference-qa/SKILL.md), and [mesh-print-validation](../.codex/skills/mesh-print-validation/SKILL.md) when applicable. A render does not replace geometry checks; manifoldness does not prove correct fit or adequate walls.
+
+Link evidence from the task's [outputs](../outputs/README.md). Report unavailable tools and unresolved checks. Add cases when repeatable checks are useful; ordinary scene changes do not require new test infrastructure.

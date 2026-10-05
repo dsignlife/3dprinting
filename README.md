@@ -1,15 +1,84 @@
-# Agent template
+# Blender 3D Studio
 
-This repository is a starting point for projects using Codex or OpenClaude, with shared instructions, tools, knowledge, and memory.
+A Codex project for creating and refining Blender scenes, 3D assets, and printable models from briefs and reference images.
 
-## Initialize a project
+The primary agent executes requested modeling, materials, lighting, cameras, animation, rendering, and export work through Blender MCP. When supplied a correction plan, it follows that plan in a batch without repeating visual analysis or adding artistic refinement passes. It selects relevant skills and performs requested checks. See [AGENTS.md](AGENTS.md) for shared instructions and [roles/README.md](roles/README.md) for responsibilities.
 
-1. Clone or copy this template into your project repository.
-2. Start Codex or OpenClaude with the project root as its working directory.
-3. Copy the first prompt below, replace the bracketed values with your project brief, and send it to the agent. The examples show how to describe a coding agent or a Blender 3D agent.
-4. Review the edited documentation. It should describe the assigned role, its responsibilities, its boundaries, and the tools actually available for the project. Resolve any setup blockers the agent reports before starting work that depends on them.
+## Scope and boundaries
 
-Initialization specializes the repository's documentation. It does not by itself install tools, connect MCP servers, or complete the first coding or modeling task.
+Work stays within the requested scenes, assets, and repository scope. Preserve original source assets and save revisions separately. Ask before purchasing assets, starting paid services, publishing work, or performing physical printer actions. A modeling request does not authorize printing.
+
+After every completed Blender implementation, save a result picture locally as `outputs/<task-id>/result.png` and link it in the final reply. Save additional Blender files and exports when requested. See [outputs/README.md](outputs/README.md).
+
+## Connection and infrastructure ownership
+
+Blender runs on another computer and is accessed through the configured Codex MCP server named `blender`. The user manages Docker, containers, dependencies, networking, and MCP configuration manually. Start Codex at this repository root with those connections already prepared. The agent does not provision or diagnose infrastructure unless separately requested.
+
+Blender and Bambu MCP tools were exposed during initialization on 2026-10-05. The Blender status call returned: "Could not connect to Blender. Make sure the Blender addon is running." This is a dated observation; connection health must be established when needed for actual work. If Blender is unreachable, the agent reports the exact error and stops Blender execution for the user to resolve.
+
+Printer connectivity, optional asset services, rendering, export transport, and mesh validation runtimes were not verified during initialization. See [tools/README.md](tools/README.md) for capabilities and limitations.
+
+OpenClaude is an optional alternative runner, not configured or tested by initialization; [CLAUDE.md](CLAUDE.md) remains its shared-instruction adapter.
+
+## Working on a 3D task
+
+Give the agent the intended use, input assets or references, dimensions when known, desired appearance or motion, and deliverables. State critical fit dimensions and whether the asset must be printable, deform for animation, or run on the web.
+
+For a supplied implementation plan, the agent discovers only necessary scene details, plans the complete pass, and batches related edits in one primary Blender code call when practical. It preserves unmentioned parts and avoids repeated visual-analysis loops. For an open brief, it chooses the relevant workflow and states necessary assumptions.
+
+One saved result picture is included automatically after implementation. Additional sources, exports, renders, and broader quality checks follow the task brief. Capture the final viewport without adding an artistic refinement pass. A technical failure gets one corrected retry; a connection failure is reported for manual resolution. Report what changed, whether execution succeeded, the local picture link, and concrete limitations.
+
+Examples:
+
+```text
+Create a matte black desk organizer in Blender, 160 x 80 x 50 mm.
+Save the .blend and a preview under outputs/desk-organizer/. Prepare
+an STL and check manifold geometry, wall thickness, clearances,
+and print orientation. Do not start a print.
+```
+
+```text
+Refine my supplied GLB with glossy materials and studio lighting.
+Preserve the source. Save the .blend and a PNG preview under
+outputs/product-shot/. Verify materials, scale, and framing.
+```
+
+```text
+Reconstruct this object from the reference images and supplied
+dimensions. Identify inferred hidden geometry and compare the result
+with the references before exporting a GLB under outputs/reference-model/.
+```
+
+## Skills and context
+
+Read only relevant skills and supporting files. Existing manifests live in [.codex/skills/](.codex/skills/); their presence does not prove an integration is connected.
+
+| Task | Starting skills |
+| --- | --- |
+| Broad Blender task | [blender-task-router](.codex/skills/blender-task-router/SKILL.md) |
+| General or manufactured geometry | [blender-modeling-core](.codex/skills/blender-modeling-core/SKILL.md), [blender-hard-surface](.codex/skills/blender-hard-surface/SKILL.md) |
+| Reference reconstruction | [blender-image-to-3d-director](.codex/skills/blender-image-to-3d-director/SKILL.md), [blender-reference-to-3d](.codex/skills/blender-reference-to-3d/SKILL.md), [blender-reference-qa](.codex/skills/blender-reference-qa/SKILL.md) |
+| Materials and presentation | [blender-materials](.codex/skills/blender-materials/SKILL.md), [blender-product-polish](.codex/skills/blender-product-polish/SKILL.md) |
+| Animation | [blender-animation-strategy](.codex/skills/blender-animation-strategy/SKILL.md), then the matching motion or rigging skill |
+| Printable models | [blender-printability-director](.codex/skills/blender-printability-director/SKILL.md), [blender-print-prep](.codex/skills/blender-print-prep/SKILL.md), [mesh-print-validation](.codex/skills/mesh-print-validation/SKILL.md) |
+| Scene review and web export | [blender-qa-review](.codex/skills/blender-qa-review/SKILL.md), [blender-threejs-export](.codex/skills/threejs-export/SKILL.md) |
+| Requested printer workflow | [bambu-p2s-mcp-executor](.codex/skills/bambu-p2s-mcp-executor/SKILL.md) |
+
+Keep domain references in `knowledge/` when needed; that folder is not currently present. Keep procedures in skills, shared executable utilities in `tools/`, and context in [memory/](memory/README.md). Preserve existing source content in `backlog/`.
+
+## Requested quality checks
+
+Validate the brief's acceptance criteria. Do not automatically add broad QA, topology audits, render analysis, or independent mesh validation to a correction batch. Successful Blender execution is evidence that the edit ran; it is not proof of checks that were never performed.
+
+When requested, inspect a preview, measure dimensions and scale, verify export settings, compare references, or review animation. For requested print validation, check manifold geometry, normals, disconnected bodies, wall thickness, clearances, and orientation. Report checks as passed, failed, or unverified with evidence. See [evals/README.md](evals/README.md).
+
+## Initialize or update project setup
+
+This repository is initialized for the brief above. When adapting a copy or changing the role:
+
+1. Start the chosen runner at the project root.
+2. Supply the project brief using the prompt below.
+3. Review documentation changes. The user resolves infrastructure blockers manually before dependent work.
 
 ### First prompt
 
@@ -17,91 +86,44 @@ Initialization specializes the repository's documentation. It does not by itself
 Initialize this repository for the following project and agent role.
 
 Project name: [Name]
-Agent role: [For example, coding agent or Blender 3D agent]
-Purpose: [What this agent helps me accomplish]
-Responsibilities: [Tasks and outcomes the agent owns]
-Boundaries: [What is in scope, what is outside its role, and which actions need my approval]
-Runner and tools: [Codex or OpenClaude; tools available or still needed]
-Deliverables: [Expected files, formats, and destinations]
-Success checks: [How completed work should be checked]
+Agent role: [Role and runner]
+Purpose: [Intended outcomes]
+Responsibilities: [Tasks the agent owns]
+Boundaries: [Scope, source preservation, and approval requirements]
+Runner and tools: [Available capabilities and setup still needed]
+Deliverables: [Files, formats, and destinations]
+Success checks: [Evidence needed to accept completed work]
 
-Read AGENTS.md first, then inspect the existing repository and README files.
-Use this brief to specialize the documentation, preserving useful shared
-guidance and existing project content.
+Read AGENTS.md and README.md. Specialize the root README and every
+existing README it lists, preserving useful guidance and project content.
+Document actual capabilities and setup blockers. Update AGENTS.md under
+600 words; keep CLAUDE.md as its adapter. Document the primary role and
+add specialists only if needed. Explain short-term memory, long-term
+decisions, and verified learnings; preserve memory/shorterm/.
 
-1. Update the root README.md with the project's purpose, the agent's role,
-   responsibilities, boundaries, setup requirements, and example requests.
-   Keep the initialization instructions and README file list useful for
-   future setup changes.
-2. Customize every existing README listed in the root README for this role.
-   Explain how its folder supports the project. Describe actual tools and
-   workflows; clearly identify anything that is not configured yet.
-3. Update AGENTS.md so future sessions know the primary role, its scope,
-   expected outputs, relevant checks, and when to read supporting files.
-   Keep it under 600 words and link to details instead of duplicating them.
-   Keep CLAUDE.md as the adapter to the shared instructions.
-4. Explain the role's use of short-term task memory, long-term decisions,
-   and verified learnings in the memory README files. Preserve the existing
-   memory/shorterm/ spelling. Record confirmed setup decisions when useful;
-   do not create fictional task histories or lessons.
-5. Keep domain references in knowledge, reusable procedures in skills,
-   shared utilities in tools, and requested artifacts in outputs. Document
-   the primary role in roles/README.md; add specialist role definitions only
-   when the project needs them.
-6. Check that documentation links and repository paths resolve, that the
-   READMEs and AGENTS.md agree, and that AGENTS.md meets its word limit.
+Keep references in knowledge, procedures in skills, utilities in tools,
+and deliverables in outputs. Verify links, paths, and consistency.
 
-This request authorizes edits to the project READMEs and AGENTS.md for
-initialization. For this setup task, inspect available capabilities and
-document requirements. Installations, external connections, and production
-work need a separate request. Do not claim a tool is available merely
-because a folder or configuration example exists.
-
-Ask focused questions if essential role or boundary information is missing.
-Otherwise proceed with the documentation edits, state your assumptions, and
-report the changed files and any remaining setup blockers.
-```
-
-### Example brief: coding agent
-
-Use these values in the first prompt and adjust them for your project:
-
-```text
-Project name: My application
-Agent role: Coding agent
-Purpose: Build and maintain this application's source code.
-Responsibilities: Implement requested features, investigate bugs, review code, maintain relevant documentation, and run appropriate checks.
-Boundaries: Work within this repository and the requested scope. Ask before deploying, publishing releases, changing production data, or making destructive changes to unrelated work.
-Runner and tools: Codex or OpenClaude, Git, and the project's language and test tools. Inspect the repository to identify the stack and missing prerequisites.
-Deliverables: Source changes and relevant documentation in their project locations; requested reports or exported artifacts under outputs/.
-Success checks: Relevant tests, formatting and lint checks, and a build when applicable. Report checks that cannot be run.
-```
-
-### Example brief: Blender 3D agent
-
-```text
-Project name: My 3D asset studio
-Agent role: Blender 3D agent
-Purpose: Create and refine Blender scenes and 3D assets from my briefs.
-Responsibilities: Modeling, materials, lighting, cameras, rendering, and exporting requested assets. Document scene organization and export requirements.
-Boundaries: Work on the requested scenes and assets. Ask before overwriting original source assets, purchasing assets, uploading or publishing work, or starting paid rendering jobs.
-Runner and tools: Codex or OpenClaude and Blender. Inspect whether a Blender connection or MCP tool is available and document any missing setup.
-Deliverables: Blender source files, renders, and requested exports under outputs/<task-id>/, with formats and naming agreed in the task brief.
-Success checks: Inspect the scene and a preview render; check dimensions, scale, materials, and requested export settings. Report anything that cannot be verified with the available tools.
+This request authorizes project README and AGENTS.md initialization
+edits. Inspect capabilities; installations, external connections, and
+production work need separate requests. Docker and infrastructure are
+managed manually by the user. Preserve plan-led, batched execution.
+Proceed with reasonable
+assumptions and report changed files and remaining setup blockers.
 ```
 
 ## README files to customize
 
-During initialization, the agent should customize these README files for its assigned role. After setup, update them when their part of the project changes.
+Keep this list aligned with project README files when setup changes.
 
-| README file | When to edit | What to document |
-| --- | --- | --- |
-| [README.md](README.md) | For every new project | Replace the template introduction with the project name, purpose, prerequisites, setup steps for the chosen runner, and examples of how to use the project. Keep this list aligned with the project's README files. |
-| [tools/README.md](tools/README.md) | When adding or changing shared tools | List available tools, their purpose, dependencies, inputs, outputs, and commands to run them. Link to detailed documentation beside each tool. |
-| [roles/README.md](roles/README.md) | When defining specialist roles | List the roles, their responsibilities, and links to their definitions. Explain how the chosen runner invokes them. |
-| [memory/README.md](memory/README.md) | When changing how project memory is used | Explain how agents find, read, update, and maintain memory across sessions. |
-| [memory/shorterm/README.md](memory/shorterm/README.md) | When changing task handoffs | Describe active task records, required context, and cleanup after completion. |
-| [memory/longterm/README.md](memory/longterm/README.md) | When changing durable project memory | Describe which confirmed decisions to retain, supporting evidence, and review triggers. |
-| [memory/learnings/README.md](memory/learnings/README.md) | When changing how lessons are recorded | Describe verification, applicability, and how to update or retire lessons. |
-| [evals/README.md](evals/README.md) | When adding or changing evaluations | Explain the evaluation cases, how to run them, expected results, pass criteria, and where generated results are stored. |
-| [outputs/README.md](outputs/README.md) | When defining project deliverables | Describe expected artifacts, their folder layout and naming, and which outputs should be committed to Git. |
+| README | What it documents |
+| --- | --- |
+| [README.md](README.md) | Purpose, scope, manual setup ownership, skills, examples, and initialization |
+| [tools/README.md](tools/README.md) | Actual tools, dependencies, diagnostics, and limitations |
+| [roles/README.md](roles/README.md) | Primary Blender role and any necessary specialists |
+| [memory/README.md](memory/README.md) | Finding, reviewing, and maintaining context |
+| [memory/shorterm/README.md](memory/shorterm/README.md) | Active tasks and handoffs |
+| [memory/longterm/README.md](memory/longterm/README.md) | Confirmed decisions and review triggers |
+| [memory/learnings/README.md](memory/learnings/README.md) | Verified, reusable lessons |
+| [evals/README.md](evals/README.md) | Manual cases and Blender acceptance checks |
+| [outputs/README.md](outputs/README.md) | Deliverables, layout, naming, and versioning |
